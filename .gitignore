@@ -1,3 +1,7 @@
+out/
+.vs/
+CMakeTmp/
+
 # Prerequisites
 *.d
 
