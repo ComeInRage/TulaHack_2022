@@ -1,3 +1,6 @@
 [submodule "tgbot-cpp"]
 	path = tgbot-cpp
 	url = https://github.com/reo7sp/tgbot-cpp
+[submodule "TgCore/tgbot-cpp"]
+	path = TgCore/tgbot-cpp
+	url = https://github.com/reo7sp/tgbot-cpp
