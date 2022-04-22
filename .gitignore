@@ -1,7 +1,7 @@
-build/
-out/
-.vs/
-CMakeTmp/
+build
+out
+.vs
+CMakeTmp
 
 # Prerequisites
 *.d
