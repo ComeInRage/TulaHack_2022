@@ -1,0 +1,3 @@
+[submodule "tgbot-cpp"]
+    path = tgbot-cpp
+    url = https://github.com/ComeInRage/TulaHack_2022
