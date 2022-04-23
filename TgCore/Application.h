@@ -2,6 +2,8 @@
 
 #include <tgbot/tgbot.h>
 
+#include <vector>
+#include <unordered_map>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -35,8 +37,7 @@ namespace tg
         
         template
         <
-            typename Func,
-            enableif<std::is_invocable_v<Func, TgBot::Message::Ptr>> = nullptr
+            typename Func
         >
         void AddCommand(std::string command, Func&& callback)
         {
@@ -45,6 +46,10 @@ namespace tg
         }
 
     private:
+        void SendInputChoose(TgBot::Message::Ptr messagePtr);
+        void SendOutputChoose(TgBot::Message::Ptr messagePtr);
         void StartEventLoop();
     };
+
+    TgBot::InlineKeyboardMarkup::Ptr InitButtonsMarkup(std::vector<std::unordered_map<std::string, std::string>> btns);
 }
