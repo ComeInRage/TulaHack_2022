@@ -18,7 +18,7 @@ endif()
 
 add_subdirectory(tgbot-cpp)
 
-set(CORE_FILES Command.h)
+set(CORE_FILES Application.cpp)
 
 add_library(TgCore STATIC ${CORE_FILES})
 
