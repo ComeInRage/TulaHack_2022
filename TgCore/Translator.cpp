@@ -1,17 +1,19 @@
 #include "Translator.h"
-#include <iostream>
-#include <curl/curl.h>
 
 namespace tg
 {
-    size_t Translator::write(void *contents, size_t size, size_t nmemb, void *userp)
+    size_t ResponseReader(char *contents, size_t size, size_t nmemb, std::string *userp)
     {
         if (userp)
         {
-            ((std::string*)userp)->reserve(size);
-            ((std::string*)userp)->append((char*)contents, size);
+            userp->reserve(size * nmemb);
+            userp->append(contents, size * nmemb);
         }
-        return size;
+        else
+        {
+            throw std::invalid_argument{"User pointer not defined"};
+        }
+        return size * nmemb;
     }
 
     std::string Translator::Translate()
@@ -27,29 +29,25 @@ namespace tg
             curl_easy_setopt(curl, CURLOPT_URL, m_url.c_str());
             
             curl_slist* headers = nullptr;
-            headers = curl_slist_append(headers, "Content-Type: application/json");
-            headers = curl_slist_append(headers, "Authorization: Bearer t1.9euelZqKkZXHlMeVkc2Lys2djJKVye3rnpWayseMxsuWzpiSzZaWnJObzY7l8_ciBm5s-e9xJmFD_t3z92I0a2z573EmYUP-.L42GmXXNXVlK2HZtFC-dbNepBCl6tssoIDskVHBhjOYZB4KZTwcIta_Qc-faj5c46fvhEM4UvZcnOVmBq7U_Bw");
-
-            size_t (Translator::*func)(void *, size_t, size_t, void *);
-            func = &Translator::write;
-            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, 
-            [&readBuffer](char *contents, size_t size, size_t nmemb, std::string *userp)
+            for (const auto &header : m_headers) 
             {
-                readBuffer.reserve(size);
-                readBuffer.append((char*)contents, size);
-                return size;
-            });
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+                headers = curl_slist_append(headers, header.c_str());
+            }
+
+            auto body = nlohmann::to_string(json);
+            std::cout << body << std::endl;
+
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"folderId\": \"b1ga217tv36i08f8halq\",\"texts\": [\"Hello\", \"World\"],\"targetLanguageCode\": \"ru\"}");
-            curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ResponseReader);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
             
+            //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
             res = curl_easy_perform(curl);
             curl_easy_cleanup(curl);
-
-            std::cout << (res == CURLE_OK) << " " << readBuffer << std::endl;
         }
 
-        return readBuffer;
+        return readBuffer; // copy elision
     }
 }

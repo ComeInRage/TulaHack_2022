@@ -3,22 +3,21 @@
 #include "json.hpp"
 
 #include <iostream>
-#include "curl2/include/curl/curl.h"
+#include <curl/curl.h>
 
 namespace tg
 {
     class Translator
     {
     private:
-        using headers_container = std::vector<std::pair<std::string, std::string>>;
-
         friend nlohmann::adl_serializer<Translator>;
         
         std::string m_url{"https://translate.api.cloud.yandex.net/translate/v2/translate"};
 
-        const headers_container m_headers {
-            {"Content-Type", "application/json"},
-            {"Authorization", "Bearer t1.9euelZqZipyJjIyTlJWczp6RkcnIye3rnpWayseMxsuWzpiSzZaWnJObzY7l8_d_QG9s-e99ZyxC_t3z9z9vbGz5731nLEL-.Y1PzNu3h3nxaYYZ_PZrL0pf8AHlbusGCUo6ZUH4JIJ-63S5J2NAS3ERu__W1Lww5fSjxWL17AFeQDuDwknTZCA"}
+        const std::vector<std::string> m_headers
+        {
+            "Content-Type: application/json",
+            "Authorization: Bearer t1.9euelZqKkZXHlMeVkc2Lys2djJKVye3rnpWayseMxsuWzpiSzZaWnJObzY7l8_ciBm5s-e9xJmFD_t3z92I0a2z573EmYUP-.L42GmXXNXVlK2HZtFC-dbNepBCl6tssoIDskVHBhjOYZB4KZTwcIta_Qc-faj5c46fvhEM4UvZcnOVmBq7U_Bw"
         };
 
         const std::string m_requestType {"POST"};
@@ -33,10 +32,11 @@ namespace tg
               m_targetLang(std::move(targetLang))
         {}
 
-        size_t write(void *contents, size_t size, size_t nmemb, void *userp);
         std::string Translate();
 
     };
+
+    size_t ResponseReader(char *contents, size_t size, size_t nmemb, std::string *userp);
 } // namespace tg
 
 namespace nlohmann

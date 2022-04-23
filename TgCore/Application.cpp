@@ -29,11 +29,6 @@ namespace tg
 
         events.onCallbackQuery([&api](TgBot::CallbackQuery::Ptr callback)
         {
-            auto startsWith = [&callback](std::string_view text)
-            {
-                return StringTools::startsWith(callback->data, "inputRu");
-            };
-
             std::cout << callback->data << std::endl;
 
             if (callback->data == "inputRu")
@@ -43,7 +38,7 @@ namespace tg
             }
             if (callback->data == "inputEn") 
             {
-                Translator translator {{"Hello", "World", "!"}, "ru"};
+                Translator translator {{callback->message->text}, "ru"};
                 std::cout << translator.Translate() << std::endl;
             }
         });
