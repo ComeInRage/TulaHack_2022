@@ -10,6 +10,13 @@ namespace tg
         {
             std::cout << "Started!" << std::endl;
             this->m_keepWork = true;
+            /*
+            bot.getApi().sendMessage(message->chat->id, "Hi, " + message->chat->firstName);
+            bot.getApi().sendMessage(message->chat->id, "Welcome to Language Translation Bot!\n");
+            bot.getApi().sendMessage(message->chat->id, "Bots command:\n");
+            bot.getApi().sendMessage(message->chat->id, "/translate_from\n");
+            bot.getApi().sendMessage(message->chat->id, "/translate_to\n");
+            */
         });
 
         this->AddCommand("stop", [this](TgBot::Message::Ptr messagePtr)
@@ -18,6 +25,7 @@ namespace tg
             this->m_keepWork = false;
         });
     }
+
 
     ExitCode Application::Run()
     {
