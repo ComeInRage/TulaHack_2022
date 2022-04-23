@@ -17,10 +17,10 @@ if (CURL_FOUND)
 endif()
 
 add_subdirectory(tgbot-cpp)
-add_subdirectory(CTranslate2)
+add_subdirectory(Google-Translator-API)
 
 set(CORE_FILES Application.cpp)
 
 add_library(TgCore STATIC ${CORE_FILES})
 
-target_link_libraries(TgCore TgBot ctranslate2 ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES} ${CURL_LIBRARIES})
+target_link_libraries(TgCore TgBot gtranslator ${CMAKE_THREAD_LIBS_INIT} ${OPENSSL_LIBRARIES} ${Boost_LIBRARIES} ${CURL_LIBRARIES})

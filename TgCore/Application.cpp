@@ -39,6 +39,10 @@ namespace tg
                 api.sendMessage(callback->message->chat->id, 
                                 "Input language set to Russian");
             }
+            if (startsWith("inputEn")) 
+            {
+                
+            }
         });
     }
 

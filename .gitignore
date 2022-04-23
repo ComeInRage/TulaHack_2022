@@ -3,6 +3,7 @@ out
 .vs
 .vscode
 CMakeTmp
+body.json
 
 # Prerequisites
 *.d

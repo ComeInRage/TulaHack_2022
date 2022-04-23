@@ -10,6 +10,3 @@
 [submodule "TgCore/JamSpell"]
 	path = TgCore/JamSpell
 	url = https://github.com/bakwc/JamSpell
-[submodule "TgCore/CTranslate2"]
-	path = TgCore/CTranslate2
-	url = https://github.com/OpenNMT/CTranslate2
