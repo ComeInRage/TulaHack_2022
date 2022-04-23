@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Translator.h"
+
 #include <tgbot/tgbot.h>
 
 #include <vector>

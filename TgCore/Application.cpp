@@ -34,14 +34,17 @@ namespace tg
                 return StringTools::startsWith(callback->data, "inputRu");
             };
 
-            if (startsWith("inputRu"))
+            std::cout << callback->data << std::endl;
+
+            if (callback->data == "inputRu")
             {
                 api.sendMessage(callback->message->chat->id, 
                                 "Input language set to Russian");
             }
-            if (startsWith("inputEn")) 
+            if (callback->data == "inputEn") 
             {
-                
+                Translator translator {{"Hello", "World", "!"}, "ru"};
+                std::cout << translator.Translate() << std::endl;
             }
         });
     }
@@ -67,9 +70,9 @@ namespace tg
 
             return ExitCode::LONGPOLL_FAILURE;
         }
-        catch (...)
+        catch (std::exception &e)
         {
-            std::cout << "Unknown failure" << std::endl;
+            std::cout << "Unknown failure: " << e.what() << std::endl;
             // no return
         }
 
