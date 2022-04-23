@@ -6,33 +6,38 @@ namespace tg
         : parent_type(std::move(token)),
           m_keepWork(true)
     {
-        this->AddCommand("start", [this](TgBot::Message::Ptr messagePtr) 
+        auto &events    = this->getEvents();
+        const auto &api = this->getApi();
+
+        this->AddCommand("start", [&api, this](TgBot::Message::Ptr messagePtr) 
         {
-            this->m_keepWork = true;
-            this->getApi().sendMessage(messagePtr->chat->id,
-                                       "Welcome to the TgDictionary!");
+            api.sendMessage(messagePtr->chat->id,
+                            "Welcome to the TgDictionary!");
           
             this->SendInputChoose(messagePtr);
             this->SendOutputChoose(messagePtr);
         });
 
-        this->AddCommand("stop", [this](TgBot::Message::Ptr messagePtr)
-        {
-            std::cout << "Stopped!" << std::endl;
-            this->m_keepWork = false;
-        });
 
-        auto &events = this->getEvents();
-
-        events.onAnyMessage([this](TgBot::Message::Ptr messagePtr)
+        events.onNonCommandMessage([&api](TgBot::Message::Ptr messagePtr)
         {
             if (auto doc = messagePtr->document)
             {
-                this->getApi().sendMessage(messagePtr->chat->id, "document" + doc->fileName);
-            } 
-            else
+                api.sendMessage(messagePtr->chat->id, "document" + doc->fileName);
+            }
+        });
+
+        events.onCallbackQuery([&api](TgBot::CallbackQuery::Ptr callback)
+        {
+            auto startsWith = [&callback](std::string_view text)
             {
-                //this->getApi().sendMessage(messagePtr->chat->id, "Not a document");
+                return StringTools::startsWith(callback->data, "inputRu");
+            };
+
+            if (startsWith("inputRu"))
+            {
+                api.sendMessage(callback->message->chat->id, 
+                                "Input language set to Russian");
             }
         });
     }
@@ -96,7 +101,7 @@ namespace tg
         }
     }
 
-    TgBot::InlineKeyboardMarkup::Ptr InitButtonsMarkup(std::vector<std::unordered_map<std::string, std::string>> btns)
+    TgBot::InlineKeyboardMarkup::Ptr Application::InitButtonsMarkup(buttons_container btns)
     {
         TgBot::InlineKeyboardMarkup::Ptr languageBtns{ new TgBot::InlineKeyboardMarkup };
 

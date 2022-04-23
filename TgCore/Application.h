@@ -24,6 +24,7 @@ namespace tg
     {
     private:
         using parent_type = TgBot::Bot;
+        using buttons_container = std::vector<std::unordered_map<std::string, std::string>>;
 
         bool m_keepWork;
 
@@ -46,10 +47,11 @@ namespace tg
         }
 
     private:
+        TgBot::InlineKeyboardMarkup::Ptr InitButtonsMarkup(buttons_container btns);
+        
         void SendInputChoose(TgBot::Message::Ptr messagePtr);
         void SendOutputChoose(TgBot::Message::Ptr messagePtr);
         void StartEventLoop();
     };
 
-    TgBot::InlineKeyboardMarkup::Ptr InitButtonsMarkup(std::vector<std::unordered_map<std::string, std::string>> btns);
 }
