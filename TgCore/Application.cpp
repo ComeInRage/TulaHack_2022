@@ -4,13 +4,14 @@ namespace tg
 {
     Application::Application(std::string token)
         : parent_type(std::move(token)),
-            m_keepWork(true)
+          m_keepWork(true)
     {
         this->AddCommand("start", [this](TgBot::Message::Ptr messagePtr) 
         {
             this->m_keepWork = true;
             this->getApi().sendMessage(messagePtr->chat->id,
                                        "Welcome to the TgDictionary!");
+          
             this->SendInputChoose(messagePtr);
             this->SendOutputChoose(messagePtr);
         });
@@ -35,6 +36,7 @@ namespace tg
             }
         });
     }
+
 
     ExitCode Application::Run()
     {
