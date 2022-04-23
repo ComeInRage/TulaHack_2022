@@ -1,5 +1,4 @@
-﻿#include <iostream>
-#include <tgbot/tgbot.h>
+﻿#include "TgCore/Application.h"
 
 int main() {
     // Здесь пример использования бота.
@@ -27,5 +26,7 @@ int main() {
     // } catch (TgBot::TgException& e) {
     //     std::cout << "error: " << e.what() << std::endl;
     // }
-    return 0;
+
+    tg::Application app{"5332685416:AAE8ElGu8XG58WiXfTujjCyk-TtYCgtMl-c"};
+    return app.Run();
 }
