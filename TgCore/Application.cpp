@@ -24,14 +24,14 @@ namespace tg
 
         events.onNonCommandMessage([&api, this](TgBot::Message::Ptr messagePtr)
         {
-            if (auto doc = messagePtr->document)
-            {
-                api.sendMessage(messagePtr->chat->id, "Document" + doc->fileName);
-            }
-            else
+            if (auto text = messagePtr->text; !text.empty())
             {
                 this->m_translator.SetWords({messagePtr->text});
                 api.sendMessage(messagePtr->chat->id, this->m_translator.Translate());
+            }
+            if (auto doc = messagePtr->document)
+            {
+                auto id = messagePtr->chat->id;
             }
         });
 

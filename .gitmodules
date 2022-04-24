@@ -13,6 +13,3 @@
 [submodule "TgCore/HTTPRequest"]
 	path = TgCore/HTTPRequest
 	url = https://github.com/elnormous/HTTPRequest
-[submodule "curl2"]
-	path = TgCore/curl2
-	url = https://github.com/curl/curl
