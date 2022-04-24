@@ -29,7 +29,14 @@ namespace tg
             if (const auto &text = messagePtr->text; !text.empty())
             {
                 this->m_translator.SetWords({ text });
-                api.sendMessage(id, this->m_translator.Translate());
+                if (auto translatedOpt = this->m_translator.Translate())
+                {
+                    api.sendMessage(id, *translatedOpt);
+                } 
+                else 
+                {
+                    api.sendMessage(id, "Can't translate your text for unknown reason");
+                }
             }
             if (const auto &doc = messagePtr->document)
             {

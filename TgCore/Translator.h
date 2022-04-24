@@ -1,6 +1,7 @@
 #pragma once
 
 #include "json.hpp"
+#include "curl_request.h"
 
 #include <iostream>
 #include <curl/curl.h>
@@ -34,11 +35,9 @@ namespace tg
 
         void SetTargetLang(std::string);
         void SetWords(std::vector<std::string> words);
-        std::string Translate();
+        std::optional<std::string> Translate();
 
     };
-
-    size_t ResponseReader(char *contents, size_t size, size_t nmemb, std::string *userp);
 } // namespace tg
 
 namespace nlohmann
