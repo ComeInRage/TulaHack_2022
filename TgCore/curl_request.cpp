@@ -13,7 +13,7 @@ namespace tg
         return 0;
     }
 
-    std::optional<std::string> curl_post_request(const std::string &url,
+    std::optional<std::string> curl_request(const std::string &url,
                                                  const std::vector<std::string> &headers,
                                                  const std::string &body)
     {
@@ -21,16 +21,24 @@ namespace tg
         std::string responseBuffer{};
 
         if(CURL *curl = curl_easy_init()) {
-            curl_slist* headers_list = nullptr;
-            for (const auto &header : headers) 
+
+            if (!headers.empty())
             {
-                headers_list = curl_slist_append(headers_list, 
-                                                 header.c_str());
+                curl_slist* headers_list = nullptr;
+                for (const auto &header : headers) 
+                {
+                    headers_list = curl_slist_append(headers_list, 
+                                                    header.c_str());
+                }
+                curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers_list);
+            }
+
+            if (!body.empty())
+            {
+                curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
             }
 
             curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers_list);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ResponseReader);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseBuffer);
             
@@ -48,5 +56,22 @@ namespace tg
         }
 
         return std::nullopt;
+    }
+
+    void curl_download_file(const std::string &link)
+    {
+        CURLcode returnCode;
+
+        if(CURL *curl = curl_easy_init()) {
+
+            curl_easy_setopt(curl, CURLOPT_URL, link.c_str());
+            
+            curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+            #ifdef _DEBUG
+            #endif
+
+            returnCode = curl_easy_perform(curl);
+            curl_easy_cleanup(curl);
+        }
     }
 }

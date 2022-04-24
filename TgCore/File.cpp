@@ -3,7 +3,7 @@
 namespace tg
 {
     File::File(fs::path path, bool remove/* = true*/)
-        : m_path(fs::canonical(std::move(path))),
+        : m_path(std::move(path)),
           m_remove(remove)
     {
         std::ofstream stream{ m_path };

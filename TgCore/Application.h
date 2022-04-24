@@ -30,6 +30,7 @@ namespace tg
         using buttons_container = std::vector<std::unordered_map<std::string, std::string>>;
 
         Translator m_translator;
+        std::string m_token;
         bool m_keepWork;
 
     public:

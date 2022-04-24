@@ -3,7 +3,8 @@
 namespace tg
 {
     Application::Application(std::string token)
-        : parent_type(std::move(token)),
+        : parent_type(token),
+          m_token(std::move(token)),
           m_keepWork(true)
     {
         auto &events    = this->getEvents();
@@ -38,14 +39,47 @@ namespace tg
                     api.sendMessage(id, "Can't translate your text for unknown reason");
                 }
             }
+
             if (const auto &doc = messagePtr->document)
             {
+                // https://api.telegram.org/bot<bot_token>/getFile?file_id=the_file_id
+                //  https://api.telegram.org/file/bot<token>/<file_path>
                 // Режим перевода файлов
-                const auto &filename = doc->fileName;
-                const auto &fileId   = doc->fileId;
+                static const std::string botLink  {"https://api.telegram.org/bot" + 
+                                                   m_token + "/"};
+                static const std::string fileLink {"https://api.telegram.org/file/bot" + 
+                                                   m_token + "/"};
 
-                // File file {fileId + "_" + filename};
-                // continue
+                const auto &fileId = doc->fileId;
+                const auto &mime   = doc->mimeType;
+
+                if (auto response = curl_request(botLink + "getFile?file_id=" + fileId,
+                                                      {}, ""))
+                {
+                    auto json = nlohmann::json::parse(std::move(*response));
+
+                    auto filePath = json.at("result")
+                                         .at("file_path")
+                                         .get<std::string>();
+
+                    std::cout << filePath << std::endl;
+                    if (auto fileContentsOpt = curl_request(fileLink + filePath, {}, ""))
+                    {
+                        this->m_translator.SetWords({ std::move(*fileContentsOpt) });
+                        if (auto translatedOpt = this->m_translator.Translate())
+                        {
+                            std::string outFileName { fileId + ".txt" };
+
+                            File out { outFileName };
+                            out << *translatedOpt;
+                            api.sendDocument(id, TgBot::InputFile::fromFile(outFileName, mime));
+                        } 
+                        else 
+                        {
+                            api.sendMessage(id, "Can't translate your text for unknown reason");
+                        }
+                    }
+                }
             }
         });
 

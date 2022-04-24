@@ -16,7 +16,7 @@ namespace tg
     {
         nlohmann::json sourceMsgJson = *this;
 
-        if (auto responseOpt = curl_post_request(m_url, 
+        if (auto responseOpt = curl_request(m_url, 
                                                  m_headers, 
                                                  nlohmann::to_string(sourceMsgJson)))
         {
