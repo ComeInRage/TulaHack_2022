@@ -17,21 +17,27 @@ namespace tg
             this->PrintLanguageChoose(messagePtr);
         });
 
-        this->AddCommand("target", [&api, this](TgBot::Message::Ptr messagePtr)
+        this->AddCommand("target", [this](TgBot::Message::Ptr messagePtr)
         {
             this->PrintLanguageChoose(messagePtr);
         });
 
         events.onNonCommandMessage([&api, this](TgBot::Message::Ptr messagePtr)
         {
-            if (auto text = messagePtr->text; !text.empty())
+            const auto id = messagePtr->chat->id;
+
+            if (const auto &text = messagePtr->text; !text.empty())
             {
-                this->m_translator.SetWords({messagePtr->text});
-                api.sendMessage(messagePtr->chat->id, this->m_translator.Translate());
+                this->m_translator.SetWords({ text });
+                api.sendMessage(id, this->m_translator.Translate());
             }
-            if (auto doc = messagePtr->document)
+            if (const auto &doc = messagePtr->document)
             {
-                auto id = messagePtr->chat->id;
+                const auto &filename = doc->fileName;
+                const auto &fileId   = doc->fileId;
+
+                File file {fileId + "_" + filename};
+                // continue
             }
         });
 

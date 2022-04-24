@@ -19,6 +19,7 @@ endif()
 add_subdirectory(tgbot-cpp)
 
 set(CORE_FILES json.hpp
+               File.cpp
                Application.cpp
                Translator.cpp)
 

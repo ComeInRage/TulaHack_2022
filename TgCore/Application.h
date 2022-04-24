@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Translator.h"
+#include "File.h"
 
 #include <tgbot/tgbot.h>
 
