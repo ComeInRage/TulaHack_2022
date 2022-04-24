@@ -28,6 +28,7 @@ namespace tg
         using parent_type = TgBot::Bot;
         using buttons_container = std::vector<std::unordered_map<std::string, std::string>>;
 
+        Translator m_translator;
         bool m_keepWork;
 
     public:
@@ -51,8 +52,7 @@ namespace tg
     private:
         TgBot::InlineKeyboardMarkup::Ptr InitButtonsMarkup(buttons_container btns);
         
-        void SendInputChoose(TgBot::Message::Ptr messagePtr);
-        void SendOutputChoose(TgBot::Message::Ptr messagePtr);
+        void PrintLanguageChoose(TgBot::Message::Ptr messagePtr);
         void StartEventLoop();
     };
 

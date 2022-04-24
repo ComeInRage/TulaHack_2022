@@ -16,9 +16,19 @@ namespace tg
         return size * nmemb;
     }
 
+    void Translator::SetTargetLang(std::string targetLang)
+    {
+        m_targetLang = std::move(targetLang);
+    }
+
+    void Translator::SetWords(std::vector<std::string> words)
+    {
+        m_words = std::move(words);
+    }
+
     std::string Translator::Translate()
     {
-        nlohmann::json json = *this;
+        nlohmann::json sourceMsgJson = *this;
 
         CURL *curl;
         CURLcode res;
@@ -34,11 +44,10 @@ namespace tg
                 headers = curl_slist_append(headers, header.c_str());
             }
 
-            auto body = nlohmann::to_string(json);
-            std::cout << body << std::endl;
+            auto body = nlohmann::to_string(sourceMsgJson);
 
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ResponseReader);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
             
@@ -47,6 +56,11 @@ namespace tg
             res = curl_easy_perform(curl);
             curl_easy_cleanup(curl);
         }
+
+        auto outMsgJson = nlohmann::json::parse(std::move(readBuffer));
+        readBuffer = outMsgJson["translations"].at(0)
+                               ["text"]
+                               .get<std::string>();
 
         return readBuffer; // copy elision
     }

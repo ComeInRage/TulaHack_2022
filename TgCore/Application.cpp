@@ -13,33 +13,43 @@ namespace tg
         {
             api.sendMessage(messagePtr->chat->id,
                             "Welcome to the TgDictionary!");
-          
-            this->SendInputChoose(messagePtr);
-            this->SendOutputChoose(messagePtr);
+
+            this->PrintLanguageChoose(messagePtr);
         });
 
+        this->AddCommand("target", [&api, this](TgBot::Message::Ptr messagePtr)
+        {
+            this->PrintLanguageChoose(messagePtr);
+        });
 
-        events.onNonCommandMessage([&api](TgBot::Message::Ptr messagePtr)
+        events.onNonCommandMessage([&api, this](TgBot::Message::Ptr messagePtr)
         {
             if (auto doc = messagePtr->document)
             {
-                api.sendMessage(messagePtr->chat->id, "document" + doc->fileName);
+                api.sendMessage(messagePtr->chat->id, "Document" + doc->fileName);
+            }
+            else
+            {
+                this->m_translator.SetWords({messagePtr->text});
+                api.sendMessage(messagePtr->chat->id, this->m_translator.Translate());
             }
         });
 
-        events.onCallbackQuery([&api](TgBot::CallbackQuery::Ptr callback)
+        events.onCallbackQuery([&api, this](TgBot::CallbackQuery::Ptr callback)
         {
             std::cout << callback->data << std::endl;
 
-            if (callback->data == "inputRu")
+            if (callback->data == "targetRu") 
             {
                 api.sendMessage(callback->message->chat->id, 
-                                "Input language set to Russian");
+                                "Target language set to Russian");
+                this->m_translator.SetTargetLang("ru");   
             }
-            if (callback->data == "inputEn") 
+            else if (callback->data == "targetEn") 
             {
-                Translator translator {{callback->message->text}, "ru"};
-                std::cout << translator.Translate() << std::endl;
+                api.sendMessage(callback->message->chat->id, 
+                                "Target language set to English");
+                this->m_translator.SetTargetLang("en");
             }
         });
     }
@@ -74,24 +84,16 @@ namespace tg
         return ExitCode::UNKNOWN_FAILURE;
     }
 
-    void Application::SendInputChoose(TgBot::Message::Ptr messagePtr)
+    void Application::PrintLanguageChoose(TgBot::Message::Ptr messagePtr)
     {
         static TgBot::InlineKeyboardMarkup::Ptr languageBtns = InitButtonsMarkup({
-            { {"ru", "inputRu"}, {"en", "inputEn"} }
+            { {"ru", "targetRu"}, {"en", "targetEn"} }
         });
 
         const auto &api = this->getApi();
-        api.sendMessage(messagePtr->chat->id, "Choose input language:", false, 0, languageBtns);
-    }
-
-    void Application::SendOutputChoose(TgBot::Message::Ptr messagePtr)
-    {
-        static TgBot::InlineKeyboardMarkup::Ptr languageBtns = InitButtonsMarkup({
-            { {"ru", "outputRu"}, {"en", "outputEn"} }
-        });
-
-        const auto &api = this->getApi();
-        api.sendMessage(messagePtr->chat->id, "Choose output language:", false, 0, languageBtns);
+        api.sendMessage(messagePtr->chat->id, 
+                        "Choose target language.\nShow menu again - /target", 
+                        false, 0, languageBtns);
     }
 
     void Application::StartEventLoop()

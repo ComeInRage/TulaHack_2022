@@ -27,11 +27,13 @@ namespace tg
         std::string m_folderId{"b1ga217tv36i08f8halq"};
 
     public:
-        Translator(std::vector<std::string> words, std::string targetLang = "en") noexcept
+        Translator(std::vector<std::string> words = {}, std::string targetLang = "en") noexcept
             : m_words(std::move(words)),
               m_targetLang(std::move(targetLang))
         {}
 
+        void SetTargetLang(std::string);
+        void SetWords(std::vector<std::string> words);
         std::string Translate();
 
     };
