@@ -33,10 +33,11 @@ namespace tg
             }
             if (const auto &doc = messagePtr->document)
             {
+                // Режим перевода файлов
                 const auto &filename = doc->fileName;
                 const auto &fileId   = doc->fileId;
 
-                File file {fileId + "_" + filename};
+                // File file {fileId + "_" + filename};
                 // continue
             }
         });
