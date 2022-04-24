@@ -10,6 +10,9 @@
 
 ```sh
 git clone --recurse-submodules https://github.com/ComeInRage/TulaHack_2022/
+mkdir build && cd build
+cmake ../
+make -j4 .
 ```
 
 ## Author
